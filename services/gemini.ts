@@ -1,8 +1,15 @@
 
-import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 
 export const generateCreativeBrief = async (prompt: string): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+  // El API_KEY se inyecta vía vite.config.ts desde el .env
+  const apiKey = process.env.API_KEY;
+  
+  if (!apiKey) {
+    return "Error: No se encontró la API Key. Crea un archivo .env con VITE_API_KEY=tu_llave";
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
   
   try {
     const response = await ai.models.generateContent({
@@ -19,6 +26,6 @@ export const generateCreativeBrief = async (prompt: string): Promise<string> => 
     return response.text || "Failed to generate a brief. Please try again.";
   } catch (error) {
     console.error("Gemini Error:", error);
-    return "Error generating response. Ensure API key is configured.";
+    return "Error generating response. Ensure API key is configured correctly.";
   }
 };
